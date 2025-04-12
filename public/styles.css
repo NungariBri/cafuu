@@ -1,0 +1,489 @@
+/* 🌟 RESET DEFAULT STYLES */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* 🌟 BODY STYLING */
+body {
+    background-color: #f8f8f8;
+    color: #333;
+    padding-top: 70px; /* Prevent content from overlapping with navbar */
+}
+
+/* 🌟 NAVBAR */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #333;
+    padding: 15px 20px;
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+nav div{
+    display:flex;
+    align-items:center;
+    gap:20px
+}
+
+nav h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 15px;
+    transition: background 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #ff5622;  /* Remove the 'e0' */
+    color: white;
+    border-radius: 5px;
+}
+
+/* 🌟 DARK MODE TOGGLE */
+#dark-mode-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* 🌟 HERO SECTION */
+header {
+    animation: bg-slideshow 15s infinite;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding-top: 80px; /* Prevents navbar from overlapping */
+}
+
+header .container {
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay for better text visibility */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+header h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    background: #ff5722;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+}
+
+.btn:hover {
+    background: #e64a19;
+}
+
+
+/* 🌟 MENU SECTION */
+#menu {
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #fff; /* Ensure visibility */
+}
+
+/* 🌟 FIXED "OUR MENU" CENTERING */
+#menu h1 {
+   text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+    width: 100%;
+    color: white; /* Ensures visibility on dark backgrounds */
+    background: rgba(0, 0, 0, 0.7); /* Adds background for better contrast */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* 🌟 RESET DEFAULT STYLES */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* 🌟 BODY STYLING */
+body {
+    background-color: #f8f8f8;
+    color: #333;
+    padding-top: 70px; /* Prevent content from overlapping with navbar */
+}
+
+/* 🌟 SEARCH BAR */
+.search-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+#search {
+    width: 500px;
+    max-width: 90%;
+    padding: 12px 16px;
+    font-size: 1.1rem;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+#search:focus {
+    border-color: #ff6600;
+    box-shadow: 0 0 8px rgba(255, 102, 0, 0.3);
+    outline: none;
+}
+/* 🌟 CATEGORY HEADINGS */
+h2 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 20px 0;
+    width: 100%;
+}
+
+/* 🌟 CATEGORY CONTAINER */
+.category-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* 🌟 MEAL CARDS */
+#menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+  margin: 0 auto;
+  }
+  
+  .meal {
+    background: #222;
+    color: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+  
+  .meal img {
+    max-width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  
+
+.meal h3 {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.meal p {
+    font-size: 16px;
+    color: #666;
+}
+
+/* 🌟 HOVER EFFECT */
+.meal:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+
+.unavailable {
+    opacity: 0.5; /* Makes the item look faded */
+    pointer-events: none; /* Prevents clicking */
+}
+
+
+/* 🌟 TIMER */
+#timer {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+}
+
+body.dark-mode #timer {
+    color: #fff;
+}
+
+/* 🌟 FOOTER */
+footer {
+    background-color: #222;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* 🌙 DARK MODE */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+body.dark-mode nav {
+    background-color: #222;
+}
+
+body.dark-mode .meal {
+    background-color: #222;
+    color: white;
+}
+
+body.dark-mode footer {
+    background-color: #111;
+}
+
+/* 🌟 SEARCH BAR RESPONSIVENESS */
+@media (max-width: 768px) {
+    #search-bar {
+        width: 80%; /* Adjust width on smaller screens */
+    }
+}
+/* 🌙 DARK MODE OVERRIDES */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+body.dark-mode nav {
+    background-color: #222;
+}
+
+body.dark-mode nav h1,
+body.dark-mode nav ul li a {
+    color: white;
+}
+
+body.dark-mode nav ul li a:hover {
+    background-color: #444; /* optional tweak for dark hover */
+}
+
+body.dark-mode header .container,
+body.dark-mode section,
+body.dark-mode footer {
+    color: white;
+}
+
+body.dark-mode input,
+body.dark-mode button,
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: #333;
+    color: white;
+    border-color: #555;
+}
+
+body.dark-mode .meal {
+    background-color: #2a2a2a;
+    color: white;
+}
+body, .meal, nav, header, section, footer {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+/* 🌞 Light Mode Overrides */
+body:not(.dark-mode) {
+    color: #333;
+    background-color: #f8f8f8;
+}
+
+body:not(.dark-mode) nav {
+    background-color: #333;
+}
+
+body:not(.dark-mode) nav h1,
+body:not(.dark-mode) nav ul li a {
+    color: white;
+}
+
+body:not(.dark-mode) nav ul li a:hover {
+    background-color: #ff5722;
+}
+
+body:not(.dark-mode) .meal {
+    background-color: white;
+    color: #333;
+}
+
+body:not(.dark-mode) footer {
+    background-color: #222;
+    color: white;
+}
+
+body:not(.dark-mode) header .container,
+body:not(.dark-mode) section {
+    color: #333;
+}
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    padding: 20px;
+  }
+  .modal-content {
+    background: #fff;
+    color: #333;
+    width: 100%;
+    max-width: 400px; /* ✅ Restrict width */
+    max-height: 90vh; /* ✅ Prevent overflow */
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  }
+  .modal-content img {
+    width: 100%;              /* ✅ Responsive */
+    height: auto;
+    max-height: 200px;        /* ✅ Optional limit */
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  
+  /* ✅ Dark Mode Overrides */
+  body.dark-mode .modal-content {
+    background: #2a2a2a;
+    color: #fff;
+  }
+  
+  .modal-content h2 {
+    margin-top: 10px;
+  }
+  
+  .modal-content p {
+    margin: 10px 0;
+  }
+  
+  
+  .modal-content .close {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: inherit;
+  }
+<<<<<<< HEAD
+  
+  #hero {
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 1s ease-in-out;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  #hero .container {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px 30px;
+    border-radius: 10px;
+  }
+  
+  .btn {
+    background-color: #ffcc00;
+    color: #000;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  @keyframes bg-slideshow {
+    0% { background: url('Images/chapati.jpg') no-repeat center/cover; }
+    33% { background: url('Images/donut.jpg') no-repeat center/cover; }
+    66% { background: url('Images/ugalibeef.jpg') no-repeat center/cover; }
+    100% { background: url('Images/beef.jpg') no-repeat center/cover; }
+}
+/* 🌟 SEARCH BAR RESPONSIVENESS */
+@media (max-width: 768px) {
+    #search-bar {
+        width: 80%; /* Adjust width on smaller screens */
+    }
+}
+=======
+  /* Centering and styling the search input */
+.search-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  #search {
+    width: 320px;
+    max-width: 90%;
+    padding: 12px 16px;
+    font-size: 1.1rem;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transition: border 0.3s, box-shadow 0.3s;
+  }
+  
+  #search:focus {
+    border-color: #ff6600;
+    box-shadow: 0 0 8px rgba(255, 102, 0, 0.3);
+    outline: none;
+  }
+  
+>>>>>>> 9c74c01d11dc6ad3e9575bf3d8c0f6247b88e4b4
