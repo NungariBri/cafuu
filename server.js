@@ -11,6 +11,8 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+const interactionRoutes = require('./routes/interactions');
+app.use('/api/interactions', interactionRoutes);
 
 // Serve defaultimage.jpg and other assets from public/
 app.use(express.static(path.join(__dirname, "public")));

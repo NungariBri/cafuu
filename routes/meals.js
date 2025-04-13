@@ -106,4 +106,34 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// 📊 Rate a meal
+router.post('/rate', async (req, res) => {
+  try {
+    const { mealId, rating } = req.body;
+
+    if (!mealId || typeof rating !== 'number' || rating < 1 || rating > 5) {
+      return res.status(400).json({ success: false, error: 'Invalid input' });
+    }
+
+    const meal = await Meal.findById(mealId);
+    if (!meal) {
+      return res.status(404).json({ success: false, error: 'Meal not found' });
+    }
+
+    // 🔄 Update average rating
+    const newRatingCount = meal.ratingCount + 1;
+    const newAverageRating = ((meal.averageRating * meal.ratingCount) + rating) / newRatingCount;
+
+    meal.ratingCount = newRatingCount;
+    meal.averageRating = newAverageRating;
+
+    await meal.save();
+    res.json({ success: true, message: 'Rating submitted', averageRating: newAverageRating });
+
+  } catch (err) {
+    console.error('❌ Error rating meal:', err);
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+});
+
 module.exports = router;

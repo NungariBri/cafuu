@@ -77,6 +77,15 @@
               <p><strong>Price:</strong> Ksh ${meal.price}</p>
               <p><strong>Rating:</strong> ${'⭐'.repeat(meal.rating || 0)}</p>
               <p><strong>Availability:</strong> ${(meal.available === false) ? '❌ Unavailable' : '✅ Available'}</p>
+              <div class="star-rating" data-mealid="${meal._id}">
+  <strong>Rate this meal:</strong><br>
+  <span data-value="1">&#9733;</span>
+  <span data-value="2">&#9733;</span>
+  <span data-value="3">&#9733;</span>
+  <span data-value="4">&#9733;</span>
+  <span data-value="5">&#9733;</span>
+  <p class="rating-status" style="font-size: 14px; margin-top: 5px;"></p>
+</div>
               <a href="https://wa.me/254712345678?text=Hello%20Admin,%20I'm%20interested%20in%20${encodeURIComponent(meal.name)}%20(Ksh%20${meal.price}).%20Is%20it%20available?" target="_blank">
                 <button style="margin-top: 10px;">💬 Message Admin on WhatsApp</button>
               </a>
@@ -87,7 +96,7 @@
           `;
       
           document.body.appendChild(modal);
-      
+            
           modal.querySelector(".close").onclick = () => modal.remove();
       
           const unavailableBtn = modal.querySelector("#mark-unavailable");
@@ -109,7 +118,45 @@
               }
             });
           }
-      
+          
+          const stars = modal.querySelectorAll(".star-rating span");
+const ratingStatus = modal.querySelector(".rating-status");
+
+stars.forEach(star => {
+  star.addEventListener("mouseover", () => {
+    const val = parseInt(star.dataset.value);
+    stars.forEach(s => {
+      s.style.color = parseInt(s.dataset.value) <= val ? "gold" : "#ccc";
+    });
+  });
+
+  star.addEventListener("mouseout", () => {
+    stars.forEach(s => (s.style.color = "#ccc"));
+  });
+
+  star.addEventListener("click", async () => {
+    const rating = parseInt(star.dataset.value);
+    const mealId = modal.querySelector(".star-rating").dataset.mealid;
+
+    try {
+      const res = await fetch("/api/meals/rate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mealId, rating })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        ratingStatus.textContent = `⭐ You rated this meal ${rating} star${rating > 1 ? 's' : ''}`;
+      } else {
+        ratingStatus.textContent = "❌ Failed to rate meal.";
+      }
+    } catch (err) {
+      ratingStatus.textContent = "❌ Network error.";
+    }
+  });
+});
+
           modal.onclick = (e) => {
             if (e.target === modal) modal.remove();
           };
