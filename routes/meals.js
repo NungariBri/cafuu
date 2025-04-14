@@ -30,7 +30,7 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     const imagePath = `/uploads/${req.file.filename}`; // Store the file path
 
     // 2. Data Extraction
-    const { name, price, rating } = req.body;
+    const { name, price, rating, timing } = req.body;
     const parsedPrice = Number(price);
     const parsedRating = Number(rating);
 
@@ -49,12 +49,29 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 
 
     // 4. Save to MongoDB
+    let parsedTiming;
+    try {
+      parsedTiming = JSON.parse(timing);
+      if (!Array.isArray(parsedTiming)) throw new Error();
+    } catch {
+      parsedTiming = [timing]; // fallback to a single-item array
+    }
+    
+    // Flatten any inner arrays and filter invalid strings
+    parsedTiming = parsedTiming.flat().filter(
+      t => typeof t === "string" && ["breakfast", "lunch", "supper"].includes(t)
+    );
+    console.log("✅ Final parsedTiming:", parsedTiming);
+
+    
+
     const newMeal = new Meal({
       name,
       price: parsedPrice,
       rating: parsedRating,
       image: imagePath, // Store the image path in the database
-      available: true
+      available: true,
+      timing: parsedTiming
     });
 
     await newMeal.save();
@@ -106,7 +123,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// 📊 Rate a meal
+// 📊 Rate a meal with day + time logic
 router.post('/rate', async (req, res) => {
   try {
     const { mealId, rating } = req.body;
@@ -120,15 +137,41 @@ router.post('/rate', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Meal not found' });
     }
 
-    // 🔄 Update average rating
-    const newRatingCount = meal.ratingCount + 1;
-    const newAverageRating = ((meal.averageRating * meal.ratingCount) + rating) / newRatingCount;
+    // ⏰ Detect time of day
+    const now = new Date();
+    const hour = now.getHours();
 
-    meal.ratingCount = newRatingCount;
-    meal.averageRating = newAverageRating;
+    let timeSlot = '';
+    if (hour >= 6 && hour < 11) {
+      timeSlot = 'breakfast';
+    } else if (hour >= 11 && hour < 16) {
+      timeSlot = 'lunch';
+    } else if (hour >= 16 && hour <= 22) {
+      timeSlot = 'supper';
+    } else {
+      return res.status(400).json({ success: false, error: 'Not within cafeteria hours.' });
+    }
+
+    // 📅 Get day of week (e.g. "monday")
+    const weekday = now.toLocaleDateString('en-KE', { weekday: 'long' }).toLowerCase();
+
+    // ⏱️ Target path: meal.ratingsByDay[weekday][timeSlot]
+    const current = meal.ratingsByDay?.[weekday]?.[timeSlot];
+    if (!current) return res.status(400).json({ success: false, error: 'Invalid rating slot' });
+
+    const newCount = current.count + 1;
+    const newAvg = ((current.average * current.count) + rating) / newCount;
+
+    meal.ratingsByDay[weekday][timeSlot].count = newCount;
+    meal.ratingsByDay[weekday][timeSlot].average = newAvg;
 
     await meal.save();
-    res.json({ success: true, message: 'Rating submitted', averageRating: newAverageRating });
+
+    res.json({
+      success: true,
+      message: `Rated ${rating} for ${timeSlot} on ${weekday}`,
+      updated: meal.ratingsByDay[weekday][timeSlot]
+    });
 
   } catch (err) {
     console.error('❌ Error rating meal:', err);

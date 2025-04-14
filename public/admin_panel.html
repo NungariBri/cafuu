@@ -14,6 +14,11 @@
     <input type="number" name="price" placeholder="Price (Ksh)" required /><br /><br />
     <input type="number" name="rating" placeholder="Rating (1-5)" min="1" max="5" /><br /><br />
     <input type="file" name="image" accept="image/*" required /><br /><br />
+    <label><strong>Meal Timing:</strong></label><br>
+<label><input type="checkbox" name="timing" value="breakfast"> Breakfast</label><br>
+<label><input type="checkbox" name="timing" value="lunch"> Lunch</label><br>
+<label><input type="checkbox" name="timing" value="supper"> Supper</label><br><br>
+
     <button type="submit">Upload Meal</button>
   </form>
   <h2 style="text-align: center; margin-top: 50px;">📋 Manage Meals</h2>
@@ -29,6 +34,10 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(form);
+
+// Collect checked timing values
+const timings = [...form.querySelectorAll('input[name="timing"]:checked')].map(cb => cb.value);
+formData.append('timing', JSON.stringify(timings));
 
       const res = await fetch('/api/meals/upload', {
         method: 'POST',
@@ -59,13 +68,18 @@ async function loadMeals() {
     card.style.width = "200px";
     card.style.textAlign = "center";
     card.style.borderRadius = "8px";
+    const breakfast = meal.breakfastRatings ? `${meal.breakfastRatings.average.toFixed(1)} (${meal.breakfastRatings.count})` : 'N/A (0)';
+const lunch = meal.lunchRatings ? `${meal.lunchRatings.average.toFixed(1)} (${meal.lunchRatings.count})` : 'N/A (0)';
+const supper = meal.supperRatings ? `${meal.supperRatings.average.toFixed(1)} (${meal.supperRatings.count})` : 'N/A (0)';
+
 
     card.innerHTML = `
   <img src="${meal.image}" alt="${meal.name}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 5px;" />
   <h3>${meal.name}</h3>
   <p>Ksh ${meal.price}</p>
-  <p>Rating: ${'⭐'.repeat(Math.round(meal.averageRating || 0))} (${meal.averageRating.toFixed(1)})</p>
-  <p>${meal.ratingCount} student rating${meal.ratingCount !== 1 ? 's' : ''}</p>
+ <p><strong>Breakfast:</strong> ${breakfast}</p>
+  <p><strong>Lunch:</strong> ${lunch}</p>
+  <p><strong>Supper:</strong> ${supper}</p>
   <p>Status: ${meal.available === false ? '❌ Unavailable' : '✅ Available'}</p>
   <button class="toggle-btn" data-id="${meal._id}" style="margin-top: 10px;">
     ${meal.available === false ? '🔄 Mark as Available' : '🚫 Mark as Unavailable'}
