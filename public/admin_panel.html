@@ -68,9 +68,15 @@ async function loadMeals() {
     card.style.width = "200px";
     card.style.textAlign = "center";
     card.style.borderRadius = "8px";
-    const breakfast = meal.breakfastRatings ? `${meal.breakfastRatings.average.toFixed(1)} (${meal.breakfastRatings.count})` : 'N/A (0)';
-const lunch = meal.lunchRatings ? `${meal.lunchRatings.average.toFixed(1)} (${meal.lunchRatings.count})` : 'N/A (0)';
-const supper = meal.supperRatings ? `${meal.supperRatings.average.toFixed(1)} (${meal.supperRatings.count})` : 'N/A (0)';
+    const today = new Date().toLocaleDateString('en-KE', { weekday: 'long' }).toLowerCase();
+const getRating = (slot) => {
+  const data = meal.ratingsByDay?.[today]?.[slot];
+  return data ? `${data.average.toFixed(1)} (${data.count})` : 'N/A (0)';
+};
+
+const breakfast = getRating('breakfast');
+const lunch = getRating('lunch');
+const supper = getRating('supper');
 
 
     card.innerHTML = `
@@ -140,6 +146,9 @@ loadMeals();
 
   </script>
 <button onclick="logout()" style="position: fixed; top: 50px; left: 10px;">Log out</button>
+<a href="/dashboard.html">
+  <button style="position: fixed; top: 50px; right: 10px;">📊 View Dashboard</button>
+</a>
 
 <script src="/script.js"></script>
 <script>
