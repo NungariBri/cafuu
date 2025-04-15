@@ -20,9 +20,11 @@ router.post('/register', async (req, res) => {
 
     // 🔒 Set role: admin if email is approved, else student
     const role = approvedAdmins.includes(email) ? 'admin' : 'student';
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+
 
     // 🆕 Create new user
-    const newUser = new User({ name, email, password, role });
+    const newUser = new User({ name, email, password, role, verificationCode, isVerified: false });
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
