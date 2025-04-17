@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-const sendVerificationEmail = require('../utils/mailer');
+const { sendVerificationEmail, sendNotificationEmail } = require('../utils/mailer');
 
 // ✅ Pre-approved admin emails
 const approvedAdmins = [

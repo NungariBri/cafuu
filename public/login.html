@@ -46,6 +46,7 @@
 
       if (res.status === 200) {
         localStorage.setItem('userRole', data.user.role);
+        localStorage.setItem('userEmail', data.user.email);
         localStorage.setItem('userName', data.user.name);
 
         if (data.user.role === 'admin') {

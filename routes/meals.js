@@ -3,6 +3,12 @@ const router = express.Router();
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+const User = require('../models/User');
+const mailer = require('../utils/mailer');
+
+const { sendNotificationEmail } = require('../utils/mailer');
+ // ✅ Fix: require the entire module
+
 
 // Set up multer for handling file uploads
 const storage = multer.diskStorage({
@@ -98,6 +104,9 @@ router.get('/', async (req, res) => {
 
 // Update meal availability
 router.put('/:id', async (req, res) => {
+
+
+  
   const { id } = req.params;
   const { available } = req.body;
 
@@ -107,6 +116,15 @@ router.put('/:id', async (req, res) => {
       { available },
       { new: true } // Return the updated document
     );
+    if (updatedMeal.available) {
+      const interestedUsers = await User.find({ favorites: updatedMeal._id });
+    
+      for (const user of interestedUsers) {
+        if (user.isVerified) {
+          await mailer.sendNotificationEmail(user.email, `🍽 ${updatedMeal.name} is now available!`);
+        }
+      }
+    }
 
     if (!updatedMeal) {
       return res.status(404).json({ success: false, message: 'Meal not found' });
@@ -166,6 +184,15 @@ router.post('/rate', async (req, res) => {
     meal.ratingsByDay[weekday][timeSlot].average = newAvg;
 
     await meal.save();
+    // inside /rate route, after meal.save()
+if (rating >= 4) {
+  const user = await User.findOne({ email: req.body.email });
+  if (user && !user.favorites.includes(mealId)) {
+    user.favorites.push(mealId);
+    await user.save();
+  }
+}
+
 
     res.json({
       success: true,

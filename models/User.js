@@ -26,7 +26,9 @@ const userSchema = new mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: false
-  }
+  },
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meal' }]
+
 });
 
 // Hash password before saving

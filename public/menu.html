@@ -26,7 +26,7 @@
         <input type="text" id="search" placeholder="Search meals...">
       </div>
     
-      <button id="dark-mode-toggle">🌙</button>
+   
       <p id="timer"></p>
     </header>
     
@@ -139,11 +139,13 @@ stars.forEach(star => {
     const mealId = modal.querySelector(".star-rating").dataset.mealid;
 
     try {
-      const res = await fetch("/api/meals/rate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mealId, rating })
-      });
+      const email = localStorage.getItem("userEmail"); // pull email from storage
+
+const res = await fetch("/api/meals/rate", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ mealId, rating, email })
+});
 
       const data = await res.json();
       if (data.success) {
