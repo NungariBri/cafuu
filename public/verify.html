@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Email Verification</title>
+</head>
+<body>
+  <h2>📧 Verify Your Email</h2>
+  <form id="verify-form">
+    <input type="email" id="email" placeholder="Email" required /><br><br>
+    <input type="text" id="code" placeholder="Verification Code" required /><br><br>
+    <button type="submit">Verify</button>
+  </form>
+  <p id="result" style="margin-top: 20px;"></p>
+
+  <script>
+    const form = document.getElementById('verify-form');
+    const result = document.getElementById('result');
+
+    // Autofill email if passed in URL
+    const params = new URLSearchParams(window.location.search);
+    const emailField = document.getElementById('email');
+    if (params.get('email')) {
+      emailField.value = params.get('email');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const code = document.getElementById('code').value;
+
+      const res = await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, code })
+      });
+
+      const data = await res.json();
+      result.textContent = data.message || 'Something went wrong';
+    });
+  </script>
+</body>
+</html>
