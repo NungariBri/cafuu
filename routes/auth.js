@@ -93,6 +93,75 @@ router.post('/verify-email', async (req, res) => {
     res.status(500).json({ message: 'Verification failed', error: err.message });
   }
 });
+// 📤 Send reset code
+router.post('/request-reset', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit
+    const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    user.resetCode = resetCode;
+    user.resetCodeExpiry = expiry;
+    await user.save();
+
+    await sendVerificationEmail(email, resetCode); // reuse same function
+    res.json({ message: 'Reset code sent to your email' });
+  } catch (err) {
+    console.error('❌ Error sending reset code:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Reset password using email + code
+router.post('/reset-password', async (req, res) => {
+  const { email, code, newPassword } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  if (!user.resetCode || user.resetCode !== code) {
+    return res.status(400).json({ message: 'Invalid or expired code' });
+  }
+
+  if (new Date() > new Date(user.resetCodeExpiry)) {
+    return res.status(400).json({ message: 'Code expired. Please request a new one.' });
+  }
+
+  user.password = newPassword;
+  user.resetCode = null;
+  user.resetCodeExpiry = null;
+  await user.save();
+
+  res.json({ message: 'Password reset successful! Please login again.' });
+});
+router.post('/resend-code', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'User is already verified' });
+    }
+
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    user.verificationCode = newCode;
+    await user.save();
+
+    await sendVerificationEmail(email, newCode);
+    res.json({ message: 'Verification code resent to your email' });
+  } catch (err) {
+    console.error('❌ Error resending code:', err.message);
+    res.status(500).json({ message: 'Server error while resending code' });
+  }
+});
+
 
 
 module.exports = router;

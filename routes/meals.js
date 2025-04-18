@@ -8,6 +8,17 @@ const mailer = require('../utils/mailer');
 
 const { sendNotificationEmail } = require('../utils/mailer');
  // ✅ Fix: require the entire module
+ function getCurrentDay() {
+  return new Date().toLocaleDateString('en-KE', { weekday: 'long' }).toLowerCase();
+}
+
+function getCurrentSlot() {
+  const hour = new Date().getHours();
+  if (hour >= 6 && hour < 11) return 'breakfast';
+  if (hour >= 11 && hour < 16) return 'lunch';
+  if (hour >= 16 && hour <= 22) return 'supper';
+  return null;
+}
 
 
 // Set up multer for handling file uploads
@@ -117,14 +128,29 @@ router.put('/:id', async (req, res) => {
       { new: true } // Return the updated document
     );
     if (updatedMeal.available) {
-      const interestedUsers = await User.find({ favorites: updatedMeal._id });
+      const interestedUsers = await User.find({
+        favorites: {
+          $elemMatch: {
+            mealId: updatedMeal._id
+          }
+        },
+        isVerified: true
+      });
     
-      for (const user of interestedUsers) {
-        if (user.isVerified) {
-          await mailer.sendNotificationEmail(user.email, `🍽 ${updatedMeal.name} is now available!`);
-        }
-      }
+      interestedUsers.forEach(user => {
+        mailer.sendNotificationEmail(
+          user.email,
+          `🍽 ${updatedMeal.name} is now available for ${getCurrentSlot()} on ${getCurrentDay()}!`
+        ).catch(err => {
+          console.error(`❌ Failed to notify ${user.email}:`, err.message);
+        });
+      });
+      
     }
+
+    
+
+    
 
     if (!updatedMeal) {
       return res.status(404).json({ success: false, message: 'Meal not found' });
@@ -185,13 +211,29 @@ router.post('/rate', async (req, res) => {
 
     await meal.save();
     // inside /rate route, after meal.save()
-if (rating >= 4) {
-  const user = await User.findOne({ email: req.body.email });
-  if (user && !user.favorites.includes(mealId)) {
-    user.favorites.push(mealId);
-    await user.save();
-  }
-}
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const existingIndex = user.favorites.findIndex(fav =>
+        fav.mealId && fav.mealId.equals(mealId) &&
+        fav.time === timeSlot &&
+        fav.day === weekday
+      );
+          
+      if (rating >= 4) {
+        if (existingIndex === -1) {
+          user.favorites.push({ mealId, time: timeSlot, day: weekday });
+        }
+        // no action needed if it already exists
+      } else {
+        if (existingIndex !== -1) {
+          user.favorites.splice(existingIndex, 1);
+        }
+      }
+    
+      await user.save();
+    }
+      
+  
 
 
     res.json({
@@ -205,5 +247,53 @@ if (rating >= 4) {
     res.status(500).json({ success: false, error: 'Server error' });
   }
 });
+// 📬 Notify users about leftovers
+router.post('/notify-leftovers/:id', async (req, res) => {
+  try {
+    const mealId = req.params.id;
+    const meal = await Meal.findById(mealId);
+    if (!meal) return res.status(404).json({ message: 'Meal not found' });
+
+    const now = new Date();
+    const hour = now.getHours();
+    let slot = '';
+    if (hour >= 6 && hour < 11) slot = 'breakfast';
+    else if (hour >= 11 && hour < 16) slot = 'lunch';
+    else if (hour >= 16 && hour <= 22) slot = 'supper';
+    else return res.status(400).json({ message: 'Outside meal hours' });
+
+    const day = now.toLocaleDateString('en-KE', { weekday: 'long' }).toLowerCase();
+
+    const users = await User.find({
+      isVerified: true,
+      favorites: {
+        $elemMatch: {
+          mealId: meal._id,
+          time: slot,
+          day: day
+        }
+      }
+    });
+
+    let notified = 0;
+    for (const user of users) {
+      try {
+        await mailer.sendNotificationEmail(
+          user.email,
+          `🍽 ${meal.name} is still available after ${slot} on ${day}. Grab your leftovers now!`
+        );
+        notified++;
+      } catch (err) {
+        console.error(`❌ Could not notify ${user.email}:`, err.message);
+      }
+    }
+
+    res.json({ message: 'Leftover notifications sent', notified });
+  } catch (err) {
+    console.error('❌ Error notifying leftovers:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 module.exports = router;

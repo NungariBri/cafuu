@@ -27,8 +27,20 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meal' }]
-
+  favorites: [{
+    mealId: { type: mongoose.Schema.Types.ObjectId, ref: 'Meal' },
+    time: { type: String, enum: ['breakfast', 'lunch', 'supper'], required: true },
+    day: { type: String, enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], required: true }
+  }],
+  resetCode: {
+    type: String
+  },
+  resetCodeExpiry: {
+    type: Date
+  }
+  
+  
+  
 });
 
 // Hash password before saving

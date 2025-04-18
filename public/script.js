@@ -162,3 +162,16 @@ function startTypewriter(element) {
 
   type();
 }
+function logout() {
+  localStorage.clear();
+  window.location.href = "index.html";
+}
+function protectUserPage() {
+  const email = localStorage.getItem("userEmail");
+  if (!email) {
+    window.location.href = "index.html";
+  }
+}
+
+// Call it at the top of your page’s `<script>`
+protectUserPage();

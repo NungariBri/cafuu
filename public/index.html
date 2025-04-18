@@ -1,54 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Cafeteria</title>
-    <link rel="stylesheet" href="styles.css?v=2">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cafeteria Login</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-    <!-- Navigation Bar -->
-    <nav>
-        <h1><i>MUST Cafeteria</i> </h1>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="menu.html">Menu</a></li>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="login.html">login</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="register.html">Register</a></li>
-            <li><a href="order.html">Order</a></li>
-            <li><a href="profile.html">Profile</a></li>
-        </ul>
-        <button id="dark-mode-toggle">🌙</button>
-    </nav>
+<body class="register-body">
+  <div class="register-container">
+    <div class="register-icon">🍽</div>
+    <h1>cafeteria</h1>
+    <h2>Login</h2>
 
-    <!-- Hero Section -->
-    <header>
-        <div class="container">
-            <h1><font color="orange">Welcome to Our Cafeteria</font></h1>
-            <p><font color="orange">Enjoy delicious and affordable meals every day!</font></p>
-            <a href="menu.html" class="btn">Explore Menu</a>
-        </div>
-    </header>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input type="email" name="email" placeholder="Email" required />
 
-    <!-- About Section -->
-    <section>
-        <p><span id="typewriter-text"></span></p>
-    </section>
+      <label for="password">Password</label>
+      <input type="password" name="password" placeholder="Password" required />
+
+      <button type="submit">Login</button>
+    </form>
+    <p style="margin-top: 10px; font-size: 14px;">
+      <a href="request_reset.html" style="color: #d35400; font-weight: bold; text-decoration: none;">Forgot Password?</a>
+    </p>
+    
+
+    <p style="margin-top: 15px; font-size: 14px;">
+      Don't have an account?
+      <a href="register.html" style="color: #d35400; font-weight: bold; text-decoration: none;">Register here</a>
+    </p>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const body = Object.fromEntries(formData.entries());
+
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+      alert(data.message);
+      if (res.status === 403 && data.message.includes('verify')) {
+  // Show resend option dynamically
+  const resendLink = document.createElement('a');
+  resendLink.href = '#';
+  resendLink.textContent = 'Resend verification code';
+  resendLink.style.color = '#d35400';
+  resendLink.style.fontWeight = 'bold';
+  resendLink.style.display = 'block';
+  resendLink.style.marginTop = '10px';
+  resendLink.onclick = async (e) => {
+  e.preventDefault();
+  const email = form.querySelector('input[name="email"]').value;
+
+  const resendRes = await fetch('/api/auth/resend-code', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+
+  const resendData = await resendRes.json();
+  alert(resendData.message);
+
+  if (resendRes.status === 200) {
+    // ✅ Redirect with email query param
+    window.location.href = `/verify.html?email=${encodeURIComponent(email)}`;
+  }
+};
+
+  // Add the link below the form if not already present
+  if (!document.getElementById('resend-link')) {
+    resendLink.id = 'resend-link';
+    form.parentNode.appendChild(resendLink);
+  }
+}
 
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 School Cafeteria. All Rights Reserved.</p>
-    </footer>
-    <a id="admin-link" href="admin_panel.html"
-   style="display: none; position: fixed; bottom: 20px; right: 20px;
-          padding: 10px 15px; background: #222; color: white;
-          border-radius: 5px; text-decoration: none; font-weight: bold;">
-  🔐 Admin Panel
-</a>
-
-    <script src="script.js"></script>
+      if (res.status === 200) {
+        localStorage.setItem('userRole', data.user.role);
+        localStorage.setItem('userEmail', data.user.email);
+        localStorage.setItem('userName', data.user.name);
+        localStorage.setItem('admin', data.user.role === 'admin' ? 'true' : 'false'); // ✅ new line
+        if (data.user.role === 'admin') {
+          window.location.href = '/admin_panel.html';
+        } else {
+          window.location.href = '/home.html';
+        }
+      }
+    });
+  </script>
 </body>
 </html>

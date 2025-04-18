@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Cafeteria</title>
+    <link rel="stylesheet" href="styles.css?v=2">
+    <style>
+        .floating-btn {
+          position: fixed;
+          top: 3.5rem;
+          right: 1rem;
+          padding: 0.6em 1em;
+          font-size: 1em;
+          background-color: #e74c3c;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          z-index: 999;
+          transition: transform 0.2s ease;
+        }
+      
+        .floating-btn:hover {
+          transform: scale(1.05);
+        }
+      
+        @media (max-width: 600px) {
+          .floating-btn {
+            font-size: 0.85em;
+            padding: 0.5em 0.8em;
+            top: 0.5rem;
+            right: 0.5rem;
+          }
+        }
+        body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('/images/caf1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    animation: bgRotate 30s infinite alternate;
+  }
+
+  @keyframes bgRotate {
+    0%   { background-image: url('/images/caf1.jpg'); }
+    50%  { background-image: url('/images/donut.jpg'); }
+    100% { background-image: url('/images/beef.jpg'); }
+  }
+
+  header .container {
+    text-align: center;
+    padding: 100px 20px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 10px;
+    max-width: 700px;
+    margin: 80px auto;
+  }
+
+  .btn {
+    background: #e67e22;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 20px;
+  }
+
+  .btn:hover {
+    background: #cf5805;
+  }
+      </style>
+      
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <h1><i>MUST Cafeteria</i> </h1>
+        <ul>
+          <li><a href="home.html">Home</a></li>
+          <li><a href="menu.html">Menu</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="index.html">login</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="register.html">Register</a></li>
+            <li><a href="order.html">Order</a></li>
+            <li><a href="profile.html">Profile</a></li>
+        </ul>
+        <button id="dark-mode-toggle">🌙</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <header>
+        <div class="container">
+            <h1><font color="orange">Welcome to Our Cafeteria</font></h1>
+            <p><font color="orange">Enjoy delicious and affordable meals every day!</font></p>
+            <a href="menu.html" class="btn">Explore Menu</a>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section>
+        <p><span id="typewriter-text"></span></p>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 School Cafeteria. All Rights Reserved.</p>
+    </footer>
+    <a id="admin-link" href="admin_panel.html"
+   style="display: none; position: fixed; bottom: 20px; right: 20px;
+          padding: 10px 15px; background: #222; color: white;
+          border-radius: 5px; text-decoration: none; font-weight: bold;">
+  🔐 Admin Panel
+</a>
+<button id="logoutBtn" class="floating-btn">Log out</button>
+<script>
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    });
+  </script>
+  
+    <script src="script.js"></script>
+</body>
+</html>
