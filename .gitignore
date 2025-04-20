@@ -5,7 +5,7 @@ node_modules/
 .env
 
 # Uploaded images
-public/uploads/
+
 
 # System files
 .DS_Store

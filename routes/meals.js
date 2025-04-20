@@ -21,18 +21,9 @@ function getCurrentSlot() {
 }
 
 
-// Set up multer for handling file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads'); // Store uploaded files in this directory
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = uuidv4() + path.extname(file.originalname);
-    cb(null, uniqueName); // Generate a unique filename
-  },
-});
 
-const upload = multer({ storage });
+
+const upload = require('../utils/cloudinaryStorage'); // adjust the path if needed
 
 // Import the Meal model (assuming it's in a separate file)
 const Meal = require('../models/Meal'); // Adjust the path if needed
@@ -44,7 +35,7 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'No image file provided' });
     }
-    const imagePath = `/uploads/${req.file.filename}`; // Store the file path
+    const imagePath = req.file.path || req.file.secure_url;
 
     // 2. Data Extraction
     const { name, price, rating, timing } = req.body;
