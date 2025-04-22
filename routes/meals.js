@@ -31,6 +31,7 @@ const Meal = require('../models/Meal'); // Adjust the path if needed
 // Route to handle meal uploads (POST request)
 router.post('/upload', upload.single('image'), async (req, res) => {
   try {
+    console.log("✅ Uploaded file object:", req.file); // ✅ This line
     // 1. File Upload Handling (using multer)
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'No image file provided' });
